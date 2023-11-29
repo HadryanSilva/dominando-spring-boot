@@ -1,8 +1,7 @@
 package br.com.hadryan.controller;
 
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import br.com.hadryan.domain.Anime;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
@@ -11,8 +10,27 @@ import java.util.List;
 public class AnimeController {
 
     @GetMapping
-    public List<String> listAll() {
-        return List.of("Naruto", "Dragon Ball Z", "Bleach");
+
+    public List<Anime> listAll() {
+        return Anime.getAnimes();
+    }
+
+    @GetMapping("filter")
+    public List<Anime> filter(@RequestParam(name = "name") String name) {
+        var animes = Anime.getAnimes();
+        if (name == null) return animes;
+        return animes
+                .stream()
+                .filter(anime -> anime.getName().equalsIgnoreCase(name))
+                .toList();
+    }
+
+    @GetMapping("{id}")
+    public Anime findByName(@PathVariable Long id) {
+        return Anime.getAnimes().stream()
+                .filter(n -> n.getId().equals(id))
+                .findFirst()
+                .orElse(null);
     }
 
 }
