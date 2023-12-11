@@ -3,6 +3,7 @@ package br.com.hadryan.controller;
 import br.com.hadryan.ProducerMapper;
 import br.com.hadryan.domain.Producer;
 import br.com.hadryan.request.ProducerPostRequest;
+import br.com.hadryan.request.ProducerPutRequest;
 import br.com.hadryan.response.ProducerGetResponse;
 import br.com.hadryan.response.ProducerPostResponse;
 import lombok.extern.log4j.Log4j2;
@@ -13,6 +14,7 @@ import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -71,6 +73,21 @@ public class ProducerController {
 		
 		Producer.getProducers().remove(producer);
 		
+		return ResponseEntity.noContent().build();
+	}
+	
+	@PutMapping
+	public ResponseEntity<Void> update(@RequestBody ProducerPutRequest request) {
+		log.info("Request recevied to update producer '{}'", request);
+		var producerToRemove = Producer.getProducers()
+				.stream()
+				.filter(n -> n.getId().equals(request.getId()))
+				.findFirst()
+				.orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Cannot found producer to be deleted"));
+		
+		var producerUpdated = MAPPER.toProducer(request, producerToRemove.getCreatedAt());
+		Producer.getProducers().remove(producerToRemove);
+		Producer.getProducers().add(producerUpdated);
 		return ResponseEntity.noContent().build();
 	}
 
