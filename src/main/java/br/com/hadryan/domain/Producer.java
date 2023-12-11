@@ -5,6 +5,7 @@ import lombok.Data;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.ThreadLocalRandom;
 
 @Data
 @Builder
@@ -17,8 +18,8 @@ public class Producer {
 	private static List<Producer> producers = new ArrayList<>();
 	
 	static {
-		var toei = Producer.builder().id(1L).name("Toei Animation").createdAt(LocalDateTime.now()).build();
-		var whatever = Producer.builder().id(2L).name("Whatever").createdAt(LocalDateTime.now()).build();
+		var toei = Producer.builder().id(ThreadLocalRandom.current().nextLong(100_000)).name("Toei Animation").createdAt(LocalDateTime.now()).build();
+		var whatever = Producer.builder().id(ThreadLocalRandom.current().nextLong(100_000)).name("Whatever").createdAt(LocalDateTime.now()).build();
 		producers.addAll(List.of(toei, whatever));
 	}
 	

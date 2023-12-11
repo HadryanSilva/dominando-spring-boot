@@ -15,6 +15,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.server.ResponseStatusException;
 import java.util.List;
 
 @RestController
@@ -25,7 +26,7 @@ public class AnimeController {
     private final AnimeMapper MAPPER = AnimeMapper.INSTANCE;
     
     @GetMapping
-    public ResponseEntity<List<AnimeGetResponse>> filter(@RequestParam(required = false) String name) {
+    public ResponseEntity<List<AnimeGetResponse>> list(@RequestParam(required = false) String name) {
         log.info("Request recevied to list all animes, params '{}'", name);
         var animes = MAPPER.toAnimesGetResponse(Anime.getAnimes());
         if (name == null) return ResponseEntity.ok(animes);
@@ -38,13 +39,13 @@ public class AnimeController {
     }
 
     @GetMapping("{id}")
-    public ResponseEntity<AnimePostResponse> findByName(@PathVariable Long id) {
+    public ResponseEntity<AnimeGetResponse> findById(@PathVariable Long id) {
         log.info("Request recevied to find animes by id '{}'", id);
         var anime = Anime.getAnimes().stream()
                 .filter(n -> n.getId().equals(id))
                 .findFirst()
-                .orElse(null);
-        var response = MAPPER.toPostResponse(anime);
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND));
+        var response = MAPPER.toGetResponse(anime);
         
         return ResponseEntity.ok(response);
     }
