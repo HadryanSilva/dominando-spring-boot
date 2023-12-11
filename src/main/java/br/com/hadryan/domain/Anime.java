@@ -1,12 +1,18 @@
 package br.com.hadryan.domain;
 
 import lombok.Builder;
-import lombok.Data;
+import lombok.EqualsAndHashCode;
+import lombok.Getter;
+import lombok.Setter;
+import lombok.ToString;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.ThreadLocalRandom;
 
-@Data
+@Getter
+@Setter
+@EqualsAndHashCode
+@ToString
 @Builder
 public class Anime {
 
