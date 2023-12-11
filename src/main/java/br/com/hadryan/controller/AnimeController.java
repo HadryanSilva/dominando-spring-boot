@@ -1,47 +1,61 @@
 package br.com.hadryan.controller;
 
+import br.com.hadryan.AnimeMapper;
 import br.com.hadryan.domain.Anime;
+import br.com.hadryan.request.AnimePostRequest;
+import br.com.hadryan.response.AnimeGetResponse;
+import br.com.hadryan.response.AnimePostResponse;
 import lombok.extern.log4j.Log4j2;
-import org.springframework.web.bind.annotation.*;
-
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RestController;
 import java.util.List;
-import java.util.concurrent.ThreadLocalRandom;
 
 @RestController
 @RequestMapping({"v1/animes", "v1/animes/"})
 @Log4j2
 public class AnimeController {
 
+    private final AnimeMapper MAPPER = AnimeMapper.INSTANCE;
+    
     @GetMapping
-
-    public List<Anime> listAll() {
-        return Anime.getAnimes();
-    }
-
-    @GetMapping("filter")
-    public List<Anime> filter(@RequestParam(name = "name") String name) {
+    public ResponseEntity<List<AnimeGetResponse>> filter(@RequestParam(required = false) String name) {
         log.info("Request recevied to list all animes, params '{}'", name);
-        var animes = Anime.getAnimes();
-        if (name == null) return animes;
-        return animes
+        var animes = MAPPER.toAnimesGetResponse(Anime.getAnimes());
+        if (name == null) return ResponseEntity.ok(animes);
+        var animeFound = animes
                 .stream()
                 .filter(anime -> anime.getName().equalsIgnoreCase(name))
                 .toList();
+        
+        return ResponseEntity.ok(animeFound);
     }
 
     @GetMapping("{id}")
-    public Anime findByName(@PathVariable Long id) {
+    public ResponseEntity<AnimePostResponse> findByName(@PathVariable Long id) {
         log.info("Request recevied to find animes by id '{}'", id);
-        return Anime.getAnimes().stream()
+        var anime = Anime.getAnimes().stream()
                 .filter(n -> n.getId().equals(id))
                 .findFirst()
                 .orElse(null);
+        var response = MAPPER.toPostResponse(anime);
+        
+        return ResponseEntity.ok(response);
     }
 
     @PostMapping
-    public Anime save(@RequestBody Anime anime) {
-        anime.setId(ThreadLocalRandom.current().nextLong(100000));
+    public ResponseEntity<AnimePostResponse> save(@RequestBody AnimePostRequest request) {
+        var anime = MAPPER.toAnime(request);
+        var response = MAPPER.toPostResponse(anime);
+        
         Anime.getAnimes().add(anime);
-        return anime;
+        
+        return ResponseEntity.status(HttpStatus.OK).body(response);
     }
 }
