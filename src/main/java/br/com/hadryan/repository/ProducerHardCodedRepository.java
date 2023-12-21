@@ -2,6 +2,7 @@ package br.com.hadryan.repository;
 
 import br.com.hadryan.domain.Producer;
 import org.springframework.http.HttpStatus;
+import org.springframework.stereotype.Repository;
 import org.springframework.web.server.ResponseStatusException;
 
 import java.time.LocalDateTime;
@@ -9,6 +10,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
+@Repository
 public class ProducerHardCodedRepository {
 
     private static List<Producer> PRODUCERS = new ArrayList<>();
