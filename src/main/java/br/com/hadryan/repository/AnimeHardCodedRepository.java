@@ -2,12 +2,14 @@ package br.com.hadryan.repository;
 
 import br.com.hadryan.domain.Anime;
 import org.springframework.http.HttpStatus;
+import org.springframework.stereotype.Repository;
 import org.springframework.web.server.ResponseStatusException;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
+@Repository
 public class AnimeHardCodedRepository {
 
     private static List<Anime> ANIMES = new ArrayList<>();

@@ -1,12 +1,12 @@
 package br.com.hadryan.controller;
 
 import br.com.hadryan.AnimeMapper;
-import br.com.hadryan.domain.Anime;
 import br.com.hadryan.request.AnimePostRequest;
 import br.com.hadryan.request.AnimePutRequest;
 import br.com.hadryan.response.AnimeGetResponse;
 import br.com.hadryan.response.AnimePostResponse;
 import br.com.hadryan.service.AnimeService;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -25,20 +25,17 @@ import java.util.List;
 @RestController
 @RequestMapping({"v1/animes", "v1/animes/"})
 @Log4j2
+@RequiredArgsConstructor
 public class AnimeController {
 
-    private final AnimeMapper MAPPER = AnimeMapper.INSTANCE;
+    private final AnimeMapper mapper;
 
-    private AnimeService service;
-
-    public AnimeController() {
-        this.service = new AnimeService();
-    }
+    private final AnimeService service;
     
     @GetMapping
     public ResponseEntity<List<AnimeGetResponse>> list(@RequestParam(required = false) String name) {
         log.info("Request recevied to list all animes, params '{}'", name);
-        var animes = MAPPER.toAnimesGetResponse(service.findAll(name));
+        var animes = mapper.toAnimesGetResponse(service.findAll(name));
         if (name == null) return ResponseEntity.ok(animes);
         var animeFound = animes
                 .stream()
@@ -54,16 +51,16 @@ public class AnimeController {
         var animeFound = service.findById(id).stream()
                 .filter(anime -> anime.getId().equals(id)).findFirst()
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND));
-        var response = MAPPER.toGetResponse(animeFound);
+        var response = mapper.toGetResponse(animeFound);
         
         return ResponseEntity.ok(response);
     }
 
     @PostMapping
     public ResponseEntity<AnimePostResponse> save(@RequestBody AnimePostRequest request) {
-        var anime = MAPPER.toAnime(request);
+        var anime = mapper.toAnime(request);
         service.save(anime);
-        var response = MAPPER.toPostResponse(anime);
+        var response = mapper.toPostResponse(anime);
         return ResponseEntity.status(HttpStatus.OK).body(response);
     }
     
@@ -77,7 +74,7 @@ public class AnimeController {
     @PutMapping
     public ResponseEntity<Void> update(@RequestBody AnimePutRequest request) {
         log.info("Request recevied to update anime '{}'", request);
-        var animeToUpdate = MAPPER.toAnime(request);
+        var animeToUpdate = mapper.toAnime(request);
         service.update(animeToUpdate);
         return ResponseEntity.noContent().build();
     }
