@@ -1,49 +1,52 @@
 package br.com.hadryan.repository;
 
 import br.com.hadryan.domain.Producer;
+import lombok.RequiredArgsConstructor;
+import lombok.extern.log4j.Log4j2;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Repository;
 import org.springframework.web.server.ResponseStatusException;
+import test.outside.Connection;
 
-import java.time.LocalDateTime;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
 @Repository
+@RequiredArgsConstructor
+@Log4j2
 public class ProducerHardCodedRepository {
 
-    private static List<Producer> PRODUCERS = new ArrayList<>();
+    private final ProducerData producerData;
+    private final Connection connection;
 
-    static {
-        var toei = Producer.builder().id(1L).name("Toei Animation").createdAt(LocalDateTime.now()).build();
-        var whatever = Producer.builder().id(2L).name("Whatever").createdAt(LocalDateTime.now()).build();
-        PRODUCERS.addAll(List.of(toei, whatever));
+    public List<Producer> findAll() {
+        return producerData.getProducers();
     }
 
     public Optional<Producer> findById(long id) {
-        return PRODUCERS
+        return producerData.getProducers()
                 .stream()
                 .filter(producer -> producer.getId().equals(id))
                 .findFirst();
     }
 
     public List<Producer> findByName(String name) {
-        return name == null ? PRODUCERS : PRODUCERS
+        log.info(connection);
+        return name == null ? producerData.getProducers() : producerData.getProducers()
                 .stream()
                 .filter(producer -> producer.getName().equalsIgnoreCase(name))
                 .toList();
     }
 
     public Producer save(Producer producer) {
-        PRODUCERS.add(producer);
+        producerData.getProducers().add(producer);
         return producer;
     }
 
     public void delete(Producer producer) {
         var producerToRemove = findById(producer.getId())
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Cannot found producer to be deleted"));
-        PRODUCERS.remove(producerToRemove);
+        producerData.getProducers().remove(producerToRemove);
     }
 
     public void update(Producer producer) {
