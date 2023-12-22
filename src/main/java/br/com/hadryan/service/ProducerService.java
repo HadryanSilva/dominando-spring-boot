@@ -29,7 +29,7 @@ public class ProducerService {
     }
 
     public void delete(Long id) {
-        var producer = repository.findById(id)
+        var producer = findById(id)
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Cannot found producer to be deleted"));
         repository.delete(producer);
     }
