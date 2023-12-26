@@ -98,6 +98,7 @@ class ProducerServiceTest {
                 .build();
         BDDMockito.when(repository.save(producerToBeSaved)).thenReturn(producerToBeSaved);
         var producer = service.save(producerToBeSaved);
+
         Assertions.assertThat(producer)
                 .isEqualTo(producerToBeSaved)
                 .hasNoNullFieldsOrProperties();
@@ -110,7 +111,7 @@ class ProducerServiceTest {
         var producerToBeDeleted = this.producers.get(0);
         BDDMockito.when(repository.findById(id)).thenReturn(Optional.of(producerToBeDeleted));
         BDDMockito.doNothing().when(repository).delete(producerToBeDeleted);
-        service.delete(id);
+
         Assertions.assertThatNoException().isThrownBy(() -> service.delete(id));
     }
 
@@ -119,6 +120,7 @@ class ProducerServiceTest {
     void delete_RemovesThrowResponseStatusException_WhenProducerNotFound() {
         var id = 1L;
         BDDMockito.when(repository.findById(id)).thenReturn(Optional.empty());
+
         Assertions.assertThatException()
                 .isThrownBy(() -> service.delete(id))
                 .isInstanceOf(ResponseStatusException.class);
@@ -133,6 +135,7 @@ class ProducerServiceTest {
         BDDMockito.doNothing().when(repository).update(producerToBeUpdated);
         producerToBeUpdated.setName("Aniplex");
         service.update(producerToBeUpdated);
+
         Assertions.assertThatNoException().isThrownBy(() -> service.update(producerToBeUpdated));
     }
 
@@ -142,6 +145,7 @@ class ProducerServiceTest {
         var id = 4L;
         var producerToUpdate = Producer.builder().id(id).name("Teste").build();
         BDDMockito.when(repository.findById(id)).thenReturn(Optional.empty());
+
         Assertions.assertThatException()
                 .isThrownBy(() -> service.update(producerToUpdate))
                 .isInstanceOf(ResponseStatusException.class);
