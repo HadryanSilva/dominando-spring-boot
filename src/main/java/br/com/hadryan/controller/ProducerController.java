@@ -33,7 +33,7 @@ public class ProducerController {
 	private final ProducerMapper mapper;
 	
 	@GetMapping
-	public ResponseEntity<List<ProducerGetResponse>> list(@RequestParam(required = false) String name) {
+	public ResponseEntity<List<ProducerGetResponse>> findAll(@RequestParam(required = false) String name) {
 		log.info("Request recevied to list all producers, params '{}'", name);
 		var producers = mapper.toProducersGetResponse(service.findAll(name));
 		if (name == null) return ResponseEntity.ok(producers);
@@ -62,7 +62,7 @@ public class ProducerController {
 		var producer = mapper.toProducer(request);
 		service.save(producer);
 		var response = mapper.toPostResponse(producer);
-		return ResponseEntity.status(HttpStatus.OK).body(response);
+		return ResponseEntity.status(HttpStatus.CREATED).body(response);
 	}
 	
 	@DeleteMapping("{id}")
