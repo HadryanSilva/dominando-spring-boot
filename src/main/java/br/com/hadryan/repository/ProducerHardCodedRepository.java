@@ -46,7 +46,8 @@ public class ProducerHardCodedRepository {
     public void delete(Producer producer) {
         var producerToRemove = findById(producer.getId())
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Cannot found producer to be deleted"));
-        producerData.getProducers().remove(producerToRemove);
+        var isRemoved = producerData.getProducers().remove(producerToRemove);
+        log.info(isRemoved);
     }
 
     public void update(Producer producer) {

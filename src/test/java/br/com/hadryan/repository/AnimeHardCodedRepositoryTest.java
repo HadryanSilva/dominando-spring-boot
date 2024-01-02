@@ -1,5 +1,6 @@
 package br.com.hadryan.repository;
 
+import br.com.hadryan.commons.AnimeUtils;
 import br.com.hadryan.domain.Anime;
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
@@ -11,7 +12,6 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
-import java.util.ArrayList;
 import java.util.List;
 
 @ExtendWith(MockitoExtension.class)
@@ -22,14 +22,12 @@ class AnimeHardCodedRepositoryTest {
     @Mock
     private AnimeData animeData;
     private List<Anime> animes;
+    @InjectMocks
+    private AnimeUtils animeUtils;
 
     @BeforeEach
     void init() {
-        var naruto = Anime.builder().id(1L).name("Naruto").build();
-        var bleach = Anime.builder().id(2L).name("Bleach").build();
-        var dragonball = Anime.builder().id(3L).name("Drangonball Z").build();
-        animes = new ArrayList<>(List.of(naruto, bleach, dragonball));
-
+        animes = animeUtils.newAnimeList();
         BDDMockito.when(animeData.getAnimes()).thenReturn(animes);
     }
 
@@ -71,10 +69,7 @@ class AnimeHardCodedRepositoryTest {
     @Test
     @DisplayName("save() returns the anime saved when successful")
     void saveAnime_WhenSuccessful() {
-        var anime = Anime.builder()
-                .id(4L)
-                .name("One Piece")
-                .build();
+        var anime = animeUtils.newAnimeToSave();
         var animeSaved = repository.save(anime);
 
         Assertions.assertThat(animeSaved).isEqualTo(anime).hasNoNullFieldsOrProperties();

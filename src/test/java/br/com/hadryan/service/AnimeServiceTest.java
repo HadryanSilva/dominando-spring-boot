@@ -1,5 +1,6 @@
 package br.com.hadryan.service;
 
+import br.com.hadryan.commons.AnimeUtils;
 import br.com.hadryan.domain.Anime;
 import br.com.hadryan.repository.AnimeHardCodedRepository;
 import org.assertj.core.api.Assertions;
@@ -13,7 +14,6 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.web.server.ResponseStatusException;
 
-import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
@@ -26,13 +26,12 @@ class AnimeServiceTest {
     @Mock
     private AnimeHardCodedRepository repository;
     private List<Anime> animes;
+    @InjectMocks
+    private AnimeUtils animeUtils;
 
     @BeforeEach
     void init() {
-        var naruto = Anime.builder().id(1L).name("Naruto").build();
-        var bleach = Anime.builder().id(2L).name("Bleach").build();
-        var dragonball = Anime.builder().id(3L).name("Dragon Ball Z").build();
-        animes = new ArrayList<>(List.of(naruto, bleach, dragonball));
+        animes = animeUtils.newAnimeList();
     }
 
     @Test
@@ -88,7 +87,7 @@ class AnimeServiceTest {
     @Test
     @DisplayName("save() returns a saved anime when successful")
     void saveAnime_WhenSuccessful() {
-        var anime = Anime.builder().id(4L).name("One Piece").build();
+        var anime = animeUtils.newAnimeToSave();
         BDDMockito.when(repository.save(anime)).thenReturn(anime);
         var animeSaved = service.save(anime);
 

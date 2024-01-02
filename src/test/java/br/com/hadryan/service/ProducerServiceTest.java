@@ -1,5 +1,6 @@
 package br.com.hadryan.service;
 
+import br.com.hadryan.commons.ProducerUtils;
 import br.com.hadryan.domain.Producer;
 import br.com.hadryan.repository.ProducerHardCodedRepository;
 import org.assertj.core.api.Assertions;
@@ -13,8 +14,6 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.web.server.ResponseStatusException;
 
-import java.time.LocalDateTime;
-import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
@@ -27,13 +26,12 @@ class ProducerServiceTest {
     @Mock
     private ProducerHardCodedRepository repository;
     private List<Producer> producers;
+    @InjectMocks
+    private ProducerUtils producerUtils;
 
     @BeforeEach
     void init() {
-        var toei = Producer.builder().id(1L).name("Ufotable").createdAt(LocalDateTime.now()).build();
-        var witStudio = Producer.builder().id(2L).name("Wit Studio").createdAt(LocalDateTime.now()).build();
-        var studioGhibli = Producer.builder().id(3L).name("Studio Ghibli").createdAt(LocalDateTime.now()).build();
-        producers = new ArrayList<>(List.of(toei, witStudio, studioGhibli));
+        producers = producerUtils.newProducerList();
     }
 
     @Test
@@ -91,11 +89,7 @@ class ProducerServiceTest {
     @Test
     @DisplayName("save() returns producer saved")
     void saveProducer_WhenSuccessful() {
-        var producerToBeSaved = Producer.builder()
-                .id(99L)
-                .name("MAPPA")
-                .createdAt(LocalDateTime.now())
-                .build();
+        var producerToBeSaved = producerUtils.newProducerToSave();
         BDDMockito.when(repository.save(producerToBeSaved)).thenReturn(producerToBeSaved);
         var producer = service.save(producerToBeSaved);
 
