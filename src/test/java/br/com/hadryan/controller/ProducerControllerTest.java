@@ -58,7 +58,7 @@ class ProducerControllerTest {
     @Test
     @DisplayName("findAll() returns a list with all producers")
     void findAll_ReturnsAllProducers_WhenSuccessful() throws Exception {
-        var response = readResourceFile("get-producer-null-name-200.json");
+        var response = readResourceFile("producer/get-producer-null-name-200.json");
         mockMvc.perform(get("/v1/producers"))
                 .andDo(print())
                 .andExpect(MockMvcResultMatchers.status().isOk())
@@ -68,7 +68,7 @@ class ProducerControllerTest {
     @Test
     @DisplayName("findAll() returns list with filtered producers when name is not null")
     void findAll_ReturnsFilteredProducer_WhenNameIsNotNull() throws Exception {
-        var response = readResourceFile("get-producer-ufotable-name-200.json");
+        var response = readResourceFile("producer/get-producer-ufotable-name-200.json");
         var name = "Ufotable";
         mockMvc.perform(get("/v1/producers").param("name", name))
                 .andDo(print())
@@ -77,9 +77,9 @@ class ProducerControllerTest {
     }
 
     @Test
-    @DisplayName("findAll() returns a empty list with all producers")
+    @DisplayName("findAll() returns a list with all producers")
     void findAll_ReturnsEmptyList_WhoNonNameIsFound() throws Exception {
-        var response = readResourceFile("get-producer-x-name-200.json");
+        var response = readResourceFile("producer/get-producer-x-name-200.json");
         var name = "Teste";
         mockMvc.perform(get("/v1/producers").param("name", name))
                 .andDo(print())
@@ -98,7 +98,7 @@ class ProducerControllerTest {
     @Test
     @DisplayName("findById() returns a empty list with all producers")
     void findById_ReturnsProducer_WhenSuccessful() throws Exception {
-        var response = readResourceFile("get-producer-ufotable-id-200.json");
+        var response = readResourceFile("producer/get-producer-ufotable-id-200.json");
         mockMvc.perform(get("/v1/producers/{id}", 1L))
                 .andDo(print())
                 .andExpect(MockMvcResultMatchers.status().isOk())
@@ -110,8 +110,8 @@ class ProducerControllerTest {
     @Test
     @DisplayName("save() creates a Producer when successful")
     void save_CreatesProducer_WhenSuccessful() throws Exception {
-        var request = readResourceFile("post-request-producer-200.json");
-        var response = readResourceFile("post-response-producer-201.json");
+        var request = readResourceFile("producer/post-request-producer-200.json");
+        var response = readResourceFile("producer/post-response-producer-201.json");
 
         var producerToBeSaved = Producer.builder()
                 .id(34219L)
@@ -135,7 +135,7 @@ class ProducerControllerTest {
     @Test
     @DisplayName("update() updates a Producer when successful")
     void update_UpdatesProducer_WhenSuccessful() throws Exception {
-        var request = readResourceFile("put-request-producer-200.json");
+        var request = readResourceFile("producer/put-request-producer-200.json");
 
         mockMvc.perform(MockMvcRequestBuilders
                         .put("/v1/producers")
@@ -148,7 +148,7 @@ class ProducerControllerTest {
     @Test
     @DisplayName("update() throw ResponseStatusException when producer not found")
     void update_UpdatesThrowResponseStatusException_WhenProducerNotFound() throws Exception {
-        var request = readResourceFile("put-request-producer-404.json");
+        var request = readResourceFile("producer/put-request-producer-404.json");
 
         mockMvc.perform(MockMvcRequestBuilders
                         .put("/v1/producers")

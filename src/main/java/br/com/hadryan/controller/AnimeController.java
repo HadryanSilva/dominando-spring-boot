@@ -33,7 +33,7 @@ public class AnimeController {
     private final AnimeService service;
     
     @GetMapping
-    public ResponseEntity<List<AnimeGetResponse>> list(@RequestParam(required = false) String name) {
+    public ResponseEntity<List<AnimeGetResponse>> findAll(@RequestParam(required = false) String name) {
         log.info("Request recevied to list all animes, params '{}'", name);
         var animes = mapper.toAnimesGetResponse(service.findAll(name));
         if (name == null) return ResponseEntity.ok(animes);
@@ -61,7 +61,7 @@ public class AnimeController {
         var anime = mapper.toAnime(request);
         service.save(anime);
         var response = mapper.toPostResponse(anime);
-        return ResponseEntity.status(HttpStatus.OK).body(response);
+        return ResponseEntity.status(HttpStatus.CREATED).body(response);
     }
     
     @DeleteMapping("{id}")
