@@ -1,0 +1,9 @@
+database:
+    url: localhost:27017
+    username: user
+    password: root
+
+logging:
+    level:
+        root: info
+        br.com.hadryan: info

@@ -1,0 +1,12 @@
+server:
+  port: 8081
+
+database:
+  url: localhost:3306
+  username: user
+  password: root
+
+logging:
+  level:
+    root: info
+    br.com.hadryan: debug
