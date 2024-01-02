@@ -3,6 +3,7 @@ package br.com.hadryan.repository;
 import br.com.hadryan.domain.Producer;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Repository;
 import org.springframework.web.server.ResponseStatusException;
@@ -17,6 +18,7 @@ import java.util.Optional;
 public class ProducerHardCodedRepository {
 
     private final ProducerData producerData;
+    @Qualifier(value = "connectionMySql")
     private final Connection connection;
 
     public List<Producer> findAll() {

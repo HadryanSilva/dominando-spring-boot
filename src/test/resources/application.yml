@@ -1,0 +1,12 @@
+spring:
+  profiles:
+    active:
+      - test
+
+server:
+  port: 8081
+
+logging:
+  level:
+    root: info
+    br.com.hadryan: debug

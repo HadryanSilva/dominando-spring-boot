@@ -1,7 +1,7 @@
 database:
     url: localhost:27017
-    username: user
-    password: root
+    username: ${LOCAL_USERNAME:}
+    password: ${LOCAL_PASSWORD:}
 
 logging:
     level:
