@@ -1,11 +1,12 @@
 package br.com.hadryan.controller;
 
-import br.com.hadryan.ProducerMapper;
+import br.com.hadryan.mapper.ProducerMapper;
 import br.com.hadryan.request.ProducerPostRequest;
 import br.com.hadryan.request.ProducerPutRequest;
 import br.com.hadryan.response.ProducerGetResponse;
 import br.com.hadryan.response.ProducerPostResponse;
 import br.com.hadryan.service.ProducerService;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.http.HttpStatus;
@@ -58,7 +59,7 @@ public class ProducerController {
 	}
 	
 	@PostMapping(produces = MediaType.APPLICATION_JSON_VALUE, consumes = MediaType.APPLICATION_JSON_VALUE)
-	public ResponseEntity<ProducerPostResponse> save(@RequestBody ProducerPostRequest request) {
+	public ResponseEntity<ProducerPostResponse> save(@RequestBody @Valid ProducerPostRequest request) {
 		var producer = mapper.toProducer(request);
 		service.save(producer);
 		var response = mapper.toPostResponse(producer);
@@ -73,7 +74,7 @@ public class ProducerController {
 	}
 	
 	@PutMapping
-	public ResponseEntity<Void> update(@RequestBody ProducerPutRequest request) {
+	public ResponseEntity<Void> update(@RequestBody @Valid ProducerPutRequest request) {
 		log.info("Request recevied to update producer '{}'", request);
 		var producerToUpdate = mapper.toProducer(request);
 		service.update(producerToUpdate);

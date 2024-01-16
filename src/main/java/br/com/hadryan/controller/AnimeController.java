@@ -1,11 +1,12 @@
 package br.com.hadryan.controller;
 
-import br.com.hadryan.AnimeMapper;
+import br.com.hadryan.mapper.AnimeMapper;
 import br.com.hadryan.request.AnimePostRequest;
 import br.com.hadryan.request.AnimePutRequest;
 import br.com.hadryan.response.AnimeGetResponse;
 import br.com.hadryan.response.AnimePostResponse;
 import br.com.hadryan.service.AnimeService;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.http.HttpStatus;
@@ -57,7 +58,7 @@ public class AnimeController {
     }
 
     @PostMapping
-    public ResponseEntity<AnimePostResponse> save(@RequestBody AnimePostRequest request) {
+    public ResponseEntity<AnimePostResponse> save(@RequestBody @Valid AnimePostRequest request) {
         var anime = mapper.toAnime(request);
         service.save(anime);
         var response = mapper.toPostResponse(anime);
@@ -72,7 +73,7 @@ public class AnimeController {
     }
     
     @PutMapping
-    public ResponseEntity<Void> update(@RequestBody AnimePutRequest request) {
+    public ResponseEntity<Void> update(@RequestBody @Valid AnimePutRequest request) {
         log.info("Request recevied to update anime '{}'", request);
         var animeToUpdate = mapper.toAnime(request);
         service.update(animeToUpdate);

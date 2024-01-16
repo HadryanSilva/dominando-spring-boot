@@ -1,4 +1,4 @@
-package br.com.hadryan;
+package br.com.hadryan.mapper;
 
 import br.com.hadryan.domain.Producer;
 import br.com.hadryan.request.ProducerPostRequest;

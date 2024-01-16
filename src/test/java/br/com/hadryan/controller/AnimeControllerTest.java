@@ -1,15 +1,19 @@
 package br.com.hadryan.controller;
 
-import br.com.hadryan.AnimeMapper;
 import br.com.hadryan.commons.AnimeUtils;
 import br.com.hadryan.commons.FileUtils;
 import br.com.hadryan.domain.Anime;
+import br.com.hadryan.mapper.AnimeMapper;
 import br.com.hadryan.repository.AnimeData;
 import br.com.hadryan.repository.AnimeHardCodedRepository;
 import br.com.hadryan.request.AnimePostRequest;
+import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.Arguments;
+import org.junit.jupiter.params.provider.MethodSource;
 import org.mockito.ArgumentMatchers;
 import org.mockito.BDDMockito;
 import org.mockito.InjectMocks;
@@ -22,11 +26,15 @@ import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
 
+import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+import java.util.stream.Stream;
 
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 
-@WebMvcTest
+@WebMvcTest(AnimeController.class)
 class AnimeControllerTest {
 
     @Autowired
@@ -135,6 +143,19 @@ class AnimeControllerTest {
     }
 
     @Test
+    @DisplayName("save() returns BadRequest when name is blank")
+    void save_ReturnsBadRequest_WhenNameIsBlank() throws Exception {
+        var request = fileUtils.readResourceFile("anime/post-request-anime-blank-400.json");
+
+        mockMvc.perform(MockMvcRequestBuilders
+                        .post(URL)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(request))
+                .andDo(print())
+                .andExpect(MockMvcResultMatchers.status().isBadRequest());
+    }
+
+    @Test
     @DisplayName("update() must update an Anime with given id")
     void update_UpdatesAnime_WhenSuccessful() throws Exception {
         var request = fileUtils.readResourceFile("anime/put-request-anime-204.json");
@@ -176,5 +197,73 @@ class AnimeControllerTest {
                 .andDo(print())
                 .andExpect(MockMvcResultMatchers.status().isNotFound())
                 .andExpect(MockMvcResultMatchers.status().reason("Cannot found anime to be deleted"));
+    }
+
+    @ParameterizedTest
+    @MethodSource("postAnimeBadRequestSourceFiles")
+    @DisplayName("save() returns BadRequest when name is null")
+    void save_ReturnsBadRequest_WhenNameIsNull(String filename, List<String> errors) throws Exception {
+        var request = fileUtils.readResourceFile("anime/%s".formatted(filename));
+
+        var mvcResult = mockMvc.perform(MockMvcRequestBuilders
+                        .post(URL)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(request))
+                .andDo(print())
+                .andExpect(MockMvcResultMatchers.status().isBadRequest())
+                .andReturn();
+
+        var resolvedException = mvcResult.getResolvedException();
+
+        Assertions.assertThat(resolvedException).isNotNull();
+        Assertions.assertThat(resolvedException.getMessage())
+                .containsIgnoringCase(errors.get(0));
+    }
+
+    @ParameterizedTest
+    @MethodSource("putAnimeBadRequestSourceFiles")
+    @DisplayName("update() returns BadRequest when name is empty")
+    void update_ReturnsBadRequest_WhenNameIsEmpty(String fileName, List<String> errors) throws Exception {
+        var request = fileUtils.readResourceFile("anime/%s".formatted(fileName));
+        var mvcResult = mockMvc.perform(MockMvcRequestBuilders.put(URL)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(request))
+                .andDo(print())
+                .andExpect(MockMvcResultMatchers.status().isBadRequest())
+                .andReturn();
+
+        var resolvedException = mvcResult.getResolvedException();
+
+        Assertions.assertThat(resolvedException).isNotNull();
+
+        Assertions.assertThat(resolvedException.getMessage()).containsIgnoringCase(errors.get(0));
+    }
+
+    private static Stream<Arguments> postAnimeBadRequestSourceFiles() {
+        var allErrorsMap = getMessageErrors();
+        var nameError = Collections.singletonList(allErrorsMap.get("name"));
+
+        return Stream.of(
+                Arguments.of("post-request-anime-blank-400.json", nameError),
+                Arguments.of("post-request-anime-null-400.json", nameError)
+        );
+    }
+
+    private static Stream<Arguments> putAnimeBadRequestSourceFiles() {
+        var allErrorsMap = getMessageErrors();
+        var nameError = Collections.singletonList(allErrorsMap.get("name"));
+
+        return Stream.of(
+                Arguments.of("put-request-anime-blank-400.json", nameError),
+                Arguments.of("put-request-anime-null-400.json", nameError)
+        );
+    }
+
+    private static Map<String, String> getMessageErrors() {
+        var nameError = "The field 'name' is required";
+        var errors = new HashMap<String, String>();
+
+        errors.put("name", nameError);
+        return errors;
     }
 }

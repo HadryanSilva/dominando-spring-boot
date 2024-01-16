@@ -1,6 +1,6 @@
 package br.com.hadryan.controller;
 
-import br.com.hadryan.ProducerMapper;
+import br.com.hadryan.mapper.ProducerMapper;
 import br.com.hadryan.commons.FileUtils;
 import br.com.hadryan.commons.ProducerUtils;
 import br.com.hadryan.repository.ProducerData;
