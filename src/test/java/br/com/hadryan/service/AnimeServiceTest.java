@@ -2,6 +2,7 @@ package br.com.hadryan.service;
 
 import br.com.hadryan.commons.AnimeUtils;
 import br.com.hadryan.domain.Anime;
+import br.com.hadryan.exception.NotFoundException;
 import br.com.hadryan.repository.AnimeHardCodedRepository;
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
@@ -12,7 +13,6 @@ import org.mockito.BDDMockito;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
-import org.springframework.web.server.ResponseStatusException;
 
 import java.util.Collections;
 import java.util.List;
@@ -108,14 +108,14 @@ class AnimeServiceTest {
     }
 
     @Test
-    @DisplayName("delete() throws ResponseStatusException when anime not found")
-    void deleteThrowsException_WhenAnimeNotFound() {
+    @DisplayName("delete() throws NotFoundException when anime not found")
+    void deleteThrowsNotFoundException_WhenAnimeNotFound() {
         var id = 1L;
         BDDMockito.when(repository.findById(id)).thenReturn(Optional.empty());
 
         Assertions.assertThatException()
                 .isThrownBy(() -> service.delete(id))
-                .isInstanceOf(ResponseStatusException.class);
+                .isInstanceOf(NotFoundException.class);
     }
 
     @Test
@@ -130,14 +130,14 @@ class AnimeServiceTest {
     }
 
     @Test
-    @DisplayName("update() throws ResponseStatusException when anime not found")
-    void updateThrowsException_WhenAnimeNotFound() {
+    @DisplayName("update() throws NotFoundException when anime not found")
+    void updateThrowsNotFoundException_WhenAnimeNotFound() {
         var id = 1L;
         BDDMockito.when(repository.findById(id)).thenReturn(Optional.empty());
 
         Assertions.assertThatException()
                 .isThrownBy(() -> service.delete(id))
-                .isInstanceOf(ResponseStatusException.class);
+                .isInstanceOf(NotFoundException.class);
     }
 
 }

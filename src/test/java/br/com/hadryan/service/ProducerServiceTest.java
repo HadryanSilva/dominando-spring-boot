@@ -2,6 +2,7 @@ package br.com.hadryan.service;
 
 import br.com.hadryan.commons.ProducerUtils;
 import br.com.hadryan.domain.Producer;
+import br.com.hadryan.exception.NotFoundException;
 import br.com.hadryan.repository.ProducerHardCodedRepository;
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
@@ -12,7 +13,6 @@ import org.mockito.BDDMockito;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
-import org.springframework.web.server.ResponseStatusException;
 
 import java.util.Collections;
 import java.util.List;
@@ -117,7 +117,7 @@ class ProducerServiceTest {
 
         Assertions.assertThatException()
                 .isThrownBy(() -> service.delete(id))
-                .isInstanceOf(ResponseStatusException.class);
+                .isInstanceOf(NotFoundException.class);
     }
 
     @Test
@@ -142,7 +142,7 @@ class ProducerServiceTest {
 
         Assertions.assertThatException()
                 .isThrownBy(() -> service.update(producerToUpdate))
-                .isInstanceOf(ResponseStatusException.class);
+                .isInstanceOf(NotFoundException.class);
     }
 
 }

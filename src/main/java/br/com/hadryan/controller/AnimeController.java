@@ -1,5 +1,6 @@
 package br.com.hadryan.controller;
 
+import br.com.hadryan.exception.NotFoundException;
 import br.com.hadryan.mapper.AnimeMapper;
 import br.com.hadryan.request.AnimePostRequest;
 import br.com.hadryan.request.AnimePutRequest;
@@ -11,16 +12,8 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.DeleteMapping;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.PutMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
-import org.springframework.web.server.ResponseStatusException;
+import org.springframework.web.bind.annotation.*;
+
 import java.util.List;
 
 @RestController
@@ -51,7 +44,7 @@ public class AnimeController {
         log.info("Request recevied to find animes by id '{}'", id);
         var animeFound = service.findById(id).stream()
                 .filter(anime -> anime.getId().equals(id)).findFirst()
-                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND));
+                .orElseThrow(() -> new NotFoundException("Anime not found"));
         var response = mapper.toGetResponse(animeFound);
         
         return ResponseEntity.ok(response);
@@ -79,4 +72,5 @@ public class AnimeController {
         service.update(animeToUpdate);
         return ResponseEntity.noContent().build();
     }
+
 }

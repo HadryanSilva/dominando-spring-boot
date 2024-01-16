@@ -4,9 +4,11 @@ import br.com.hadryan.commons.AnimeUtils;
 import br.com.hadryan.commons.FileUtils;
 import br.com.hadryan.domain.Anime;
 import br.com.hadryan.mapper.AnimeMapper;
+import br.com.hadryan.mapper.AnimeMapperImpl;
 import br.com.hadryan.repository.AnimeData;
 import br.com.hadryan.repository.AnimeHardCodedRepository;
 import br.com.hadryan.request.AnimePostRequest;
+import br.com.hadryan.service.AnimeService;
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -21,6 +23,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.boot.test.mock.mockito.SpyBean;
+import org.springframework.context.annotation.Import;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
@@ -35,6 +38,8 @@ import java.util.stream.Stream;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 
 @WebMvcTest(AnimeController.class)
+@Import({AnimeMapperImpl.class, FileUtils.class,
+        AnimeUtils.class, AnimeService.class})
 class AnimeControllerTest {
 
     @Autowired

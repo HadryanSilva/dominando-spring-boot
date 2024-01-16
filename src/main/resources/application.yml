@@ -3,8 +3,8 @@ server:
 
 database:
   url: localhost:3306
-  username: user
-  password: root
+  username: ${LOCAL_USERNAME:}
+  password: ${LOCAL_PASSWORD:}
 
 logging:
   level:

@@ -1,11 +1,14 @@
 package br.com.hadryan.controller;
 
+import br.com.hadryan.config.BeanConfig;
 import br.com.hadryan.mapper.ProducerMapper;
 import br.com.hadryan.commons.FileUtils;
 import br.com.hadryan.commons.ProducerUtils;
+import br.com.hadryan.mapper.ProducerMapperImpl;
 import br.com.hadryan.repository.ProducerData;
 import br.com.hadryan.repository.ProducerHardCodedRepository;
 import br.com.hadryan.request.ProducerPostRequest;
+import br.com.hadryan.service.ProducerService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -15,6 +18,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.boot.test.mock.mockito.SpyBean;
+import org.springframework.context.annotation.Import;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
@@ -25,6 +29,8 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 
 @WebMvcTest(ProducerController.class)
+@Import({ProducerMapperImpl.class, ProducerUtils.class,
+        ProducerService.class, BeanConfig.class, FileUtils.class, ProducerUtils.class})
 class ProducerControllerTest {
 
     @Autowired
