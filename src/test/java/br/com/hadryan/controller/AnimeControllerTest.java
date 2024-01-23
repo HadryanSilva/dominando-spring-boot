@@ -198,10 +198,16 @@ class AnimeControllerTest {
     @DisplayName("delete() throw ResponseStatusException when anime not found")
     void delete_ThrowResponseStatusException_WhenAnimeNotFound() throws Exception {
         var id = 4L;
-        mockMvc.perform(MockMvcRequestBuilders.delete(URL + "/{id}", id))
+       var result = mockMvc.perform(MockMvcRequestBuilders.delete(URL + "/{id}", id))
                 .andDo(print())
                 .andExpect(MockMvcResultMatchers.status().isNotFound())
-                .andExpect(MockMvcResultMatchers.status().reason("Cannot found anime to be deleted"));
+                .andReturn();
+
+       var resolvedException = result.getResolvedException();
+
+       Assertions.assertThat(resolvedException).isNotNull();
+       Assertions.assertThat(resolvedException.getMessage())
+               .containsIgnoringCase("Cannot found anime to be deleted");
     }
 
     @ParameterizedTest

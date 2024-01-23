@@ -9,6 +9,7 @@ import br.com.hadryan.repository.ProducerData;
 import br.com.hadryan.repository.ProducerHardCodedRepository;
 import br.com.hadryan.request.ProducerPostRequest;
 import br.com.hadryan.service.ProducerService;
+import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -143,13 +144,19 @@ class ProducerControllerTest {
     void update_UpdatesThrowResponseStatusException_WhenProducerNotFound() throws Exception {
         var request = fileUtils.readResourceFile("producer/put-request-producer-404.json");
 
-        mockMvc.perform(MockMvcRequestBuilders
+        var result = mockMvc.perform(MockMvcRequestBuilders
                         .put(URL)
                         .content(request)
                         .contentType(MediaType.APPLICATION_JSON))
                 .andDo(MockMvcResultHandlers.print())
                 .andExpect(MockMvcResultMatchers.status().isNotFound())
-                .andExpect(MockMvcResultMatchers.status().reason("Cannot found producer to be updated"));
+                .andReturn();
+
+        var resolvedException = result.getResolvedException();
+
+        Assertions.assertThat(resolvedException).isNotNull();
+        Assertions.assertThat(resolvedException.getMessage())
+                .containsIgnoringCase("Cannot found producer to be updated");
     }
 
     @Test
@@ -163,10 +170,15 @@ class ProducerControllerTest {
     @Test
     @DisplayName("delete() throw ResponseStatusException when producer not found")
     void delete_RemovesThrowResponseStatusException_WhenProducerNotFound() throws Exception {
-        mockMvc.perform(MockMvcRequestBuilders.delete(URL + "/{id}", 1000))
+        var result = mockMvc.perform(MockMvcRequestBuilders.delete(URL + "/{id}", 1000))
                 .andDo(MockMvcResultHandlers.print())
                 .andExpect(MockMvcResultMatchers.status().isNotFound())
-                .andExpect(MockMvcResultMatchers.status().reason("Cannot found producer to be deleted"));
+                .andReturn();
+
+        var resolvedException = result.getResolvedException();
+        Assertions.assertThat(resolvedException).isNotNull();
+        Assertions.assertThat(resolvedException.getMessage())
+                .containsIgnoringCase("Cannot found producer to be deleted");
     }
 
 }

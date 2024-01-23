@@ -11,7 +11,8 @@ import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
-public class AnimeService {
+public class
+AnimeService {
 
     private final AnimeHardCodedRepository repository;
 

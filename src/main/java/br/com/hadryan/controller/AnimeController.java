@@ -28,7 +28,7 @@ public class AnimeController {
     
     @GetMapping
     public ResponseEntity<List<AnimeGetResponse>> findAll(@RequestParam(required = false) String name) {
-        log.info("Request recevied to list all animes, params '{}'", name);
+        log.info("Request received to list all animes, params '{}'", name);
         var animes = mapper.toAnimesGetResponse(service.findAll(name));
         if (name == null) return ResponseEntity.ok(animes);
         var animeFound = animes
@@ -41,7 +41,7 @@ public class AnimeController {
 
     @GetMapping("{id}")
     public ResponseEntity<AnimeGetResponse> findById(@PathVariable Long id) {
-        log.info("Request recevied to find animes by id '{}'", id);
+        log.info("Request received to find animes by id '{}'", id);
         var animeFound = service.findById(id).stream()
                 .filter(anime -> anime.getId().equals(id)).findFirst()
                 .orElseThrow(() -> new NotFoundException("Anime not found"));
@@ -60,14 +60,14 @@ public class AnimeController {
     
     @DeleteMapping("{id}")
     public ResponseEntity<Void> delete(@PathVariable Long id) {
-        log.info("Request recevied to delete producer with id '{}'", id);
+        log.info("Request received to delete producer with id '{}'", id);
         service.delete(id);
         return ResponseEntity.noContent().build();
     }
     
     @PutMapping
     public ResponseEntity<Void> update(@RequestBody @Valid AnimePutRequest request) {
-        log.info("Request recevied to update anime '{}'", request);
+        log.info("Request received to update anime '{}'", request);
         var animeToUpdate = mapper.toAnime(request);
         service.update(animeToUpdate);
         return ResponseEntity.noContent().build();
