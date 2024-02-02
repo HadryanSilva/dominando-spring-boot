@@ -1,6 +1,5 @@
 package br.com.hadryan.controller;
 
-import br.com.hadryan.exception.NotFoundException;
 import br.com.hadryan.mapper.AnimeMapper;
 import br.com.hadryan.request.AnimePostRequest;
 import br.com.hadryan.request.AnimePutRequest;
@@ -21,56 +20,60 @@ import java.util.List;
 @Log4j2
 @RequiredArgsConstructor
 public class AnimeController {
-
     private final AnimeMapper mapper;
+    private final AnimeService animeService;
 
-    private final AnimeService service;
-    
     @GetMapping
-    public ResponseEntity<List<AnimeGetResponse>> findAll(@RequestParam(required = false) String name) {
-        log.info("Request received to list all animes, params '{}'", name);
-        var animes = mapper.toAnimesGetResponse(service.findAll(name));
-        if (name == null) return ResponseEntity.ok(animes);
-        var animeFound = animes
-                .stream()
-                .filter(anime -> anime.getName().equalsIgnoreCase(name))
-                .toList();
-        
-        return ResponseEntity.ok(animeFound);
+    public ResponseEntity<List<AnimeGetResponse>> list(@RequestParam(required = false) String name) {
+        log.info("Request received to list all animes, param name '{}'", name);
+
+        var animes = animeService.findAll(name);
+
+        var animeGetResponses = mapper.toGetResponses(animes);
+
+        return ResponseEntity.ok(animeGetResponses);
     }
 
     @GetMapping("{id}")
     public ResponseEntity<AnimeGetResponse> findById(@PathVariable Long id) {
-        log.info("Request received to find animes by id '{}'", id);
-        var animeFound = service.findById(id).stream()
-                .filter(anime -> anime.getId().equals(id)).findFirst()
-                .orElseThrow(() -> new NotFoundException("Anime not found"));
+        log.info("Request received find anime by id '{}'", id);
+        var animeFound = animeService.findById(id);
+
         var response = mapper.toGetResponse(animeFound);
-        
+
         return ResponseEntity.ok(response);
     }
 
+    // Idempotência
     @PostMapping
     public ResponseEntity<AnimePostResponse> save(@RequestBody @Valid AnimePostRequest request) {
+        log.info("Request received save anime '{}'", request);
+
         var anime = mapper.toAnime(request);
-        service.save(anime);
+
+        anime = animeService.save(anime);
+
         var response = mapper.toPostResponse(anime);
+
         return ResponseEntity.status(HttpStatus.CREATED).body(response);
     }
-    
+
     @DeleteMapping("{id}")
-    public ResponseEntity<Void> delete(@PathVariable Long id) {
-        log.info("Request received to delete producer with id '{}'", id);
-        service.delete(id);
-        return ResponseEntity.noContent().build();
-    }
-    
-    @PutMapping
-    public ResponseEntity<Void> update(@RequestBody @Valid AnimePutRequest request) {
-        log.info("Request received to update anime '{}'", request);
-        var animeToUpdate = mapper.toAnime(request);
-        service.update(animeToUpdate);
+    public ResponseEntity<Void> deleteById(@PathVariable Long id) {
+        log.info("Request received to delete the anime by id '{}'", id);
+        animeService.delete(id);
+
         return ResponseEntity.noContent().build();
     }
 
+    @PutMapping
+    public ResponseEntity<Void> update(@RequestBody @Valid AnimePutRequest request) {
+        log.info("Request received to update the anime '{}'", request);
+
+        var animeToUpdate = mapper.toAnime(request);
+
+        animeService.update(animeToUpdate);
+
+        return ResponseEntity.noContent().build();
+    }
 }

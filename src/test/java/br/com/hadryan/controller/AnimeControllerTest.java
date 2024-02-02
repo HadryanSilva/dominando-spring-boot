@@ -3,11 +3,9 @@ package br.com.hadryan.controller;
 import br.com.hadryan.commons.AnimeUtils;
 import br.com.hadryan.commons.FileUtils;
 import br.com.hadryan.domain.Anime;
-import br.com.hadryan.mapper.AnimeMapper;
 import br.com.hadryan.mapper.AnimeMapperImpl;
 import br.com.hadryan.repository.AnimeData;
 import br.com.hadryan.repository.AnimeHardCodedRepository;
-import br.com.hadryan.request.AnimePostRequest;
 import br.com.hadryan.service.AnimeService;
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
@@ -18,7 +16,6 @@ import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
 import org.mockito.ArgumentMatchers;
 import org.mockito.BDDMockito;
-import org.mockito.InjectMocks;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
@@ -38,30 +35,25 @@ import java.util.stream.Stream;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 
 @WebMvcTest(AnimeController.class)
-@Import({AnimeMapperImpl.class, FileUtils.class,
-        AnimeUtils.class, AnimeService.class})
+@Import({AnimeMapperImpl.class, FileUtils.class, AnimeUtils.class, AnimeService.class})
 class AnimeControllerTest {
 
     @Autowired
     private MockMvc mockMvc;
     @MockBean
     private AnimeData animeData;
-    private List<Anime> animes;
-    @SpyBean
-    private AnimeMapper animeMapper;
     @SpyBean
     private AnimeHardCodedRepository repository;
-    @InjectMocks
-    private AnimeUtils animeUtils;
     @Autowired
     private FileUtils fileUtils;
+    @Autowired
+    private AnimeUtils animeUtils;
 
     private static final String URL = "/v1/animes";
 
     @BeforeEach
     void init() {
-        animes = animeUtils.newAnimeList();
-        BDDMockito.when(animeData.getAnimes()).thenReturn(animes);
+        BDDMockito.when(animeData.getAnimes()).thenReturn(animeUtils.newAnimeList());
     }
 
     @Test
@@ -136,7 +128,6 @@ class AnimeControllerTest {
         Anime animeToBeSaved = Anime.builder().id(4L).name("One Piece").build();
 
         BDDMockito.when(repository.save(ArgumentMatchers.any())).thenReturn(animeToBeSaved);
-        BDDMockito.when(animeMapper.toAnime((AnimePostRequest) ArgumentMatchers.any())).thenReturn(animeToBeSaved);
 
         mockMvc.perform(MockMvcRequestBuilders
                 .post(URL)
@@ -173,8 +164,8 @@ class AnimeControllerTest {
     }
 
     @Test
-    @DisplayName("update() throw ResponseStatusException when anime not found")
-    void update_ThrowResponseStatusException_WhenAnimeNotFound() throws Exception {
+    @DisplayName("update() throw NotFoundException when anime not found")
+    void update_ThrowNotFoundException_WhenAnimeNotFound() throws Exception {
         var request = fileUtils.readResourceFile("anime/put-request-anime-404.json");
         mockMvc.perform(MockMvcRequestBuilders
                         .put(URL)
@@ -195,8 +186,8 @@ class AnimeControllerTest {
     }
 
     @Test
-    @DisplayName("delete() throw ResponseStatusException when anime not found")
-    void delete_ThrowResponseStatusException_WhenAnimeNotFound() throws Exception {
+    @DisplayName("delete() throw NotFoundException when anime not found")
+    void delete_ThrowNotFoundException_WhenAnimeNotFound() throws Exception {
         var id = 4L;
        var result = mockMvc.perform(MockMvcRequestBuilders.delete(URL + "/{id}", id))
                 .andDo(print())

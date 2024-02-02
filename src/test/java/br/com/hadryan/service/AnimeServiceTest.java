@@ -3,7 +3,7 @@ package br.com.hadryan.service;
 import br.com.hadryan.commons.AnimeUtils;
 import br.com.hadryan.domain.Anime;
 import br.com.hadryan.exception.NotFoundException;
-import br.com.hadryan.repository.AnimeHardCodedRepository;
+import br.com.hadryan.repository.AnimeRepository;
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -24,7 +24,7 @@ class AnimeServiceTest {
     @InjectMocks
     private AnimeService service;
     @Mock
-    private AnimeHardCodedRepository repository;
+    private AnimeRepository repository;
     private List<Anime> animes;
     @InjectMocks
     private AnimeUtils animeUtils;
@@ -72,7 +72,7 @@ class AnimeServiceTest {
         BDDMockito.when(repository.findById(1L)).thenReturn(Optional.of(expectedAnime));
         var animeFound = service.findById(id);
 
-        Assertions.assertThat(animeFound).isPresent().contains(expectedAnime);
+        Assertions.assertThat(animeFound).isEqualTo(expectedAnime);
     }
 
     @Test
@@ -81,7 +81,7 @@ class AnimeServiceTest {
         BDDMockito.when(repository.findById(1L)).thenReturn(Optional.empty());
         var anime = service.findById(1L);
 
-        Assertions.assertThat(anime).isEmpty();
+        Assertions.assertThat(anime).isNull();
     }
 
     @Test
@@ -122,7 +122,7 @@ class AnimeServiceTest {
     @DisplayName("update() returns updated anime when successful")
     void updateAnime_WhenSuccessful() {
         var animeToUpdate = this.animes.get(0);
-        BDDMockito.doNothing().when(repository).update(animeToUpdate);
+        BDDMockito.when(repository.save(animeToUpdate)).thenReturn(animeToUpdate);
         animeToUpdate.setName("One Piece");
         service.update(animeToUpdate);
 

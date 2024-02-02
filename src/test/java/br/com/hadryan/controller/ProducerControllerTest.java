@@ -1,10 +1,8 @@
 package br.com.hadryan.controller;
 
-import br.com.hadryan.config.BeanConfig;
-import br.com.hadryan.mapper.ProducerMapper;
 import br.com.hadryan.commons.FileUtils;
 import br.com.hadryan.commons.ProducerUtils;
-import br.com.hadryan.mapper.ProducerMapperImpl;
+import br.com.hadryan.mapper.ProducerMapper;
 import br.com.hadryan.repository.ProducerData;
 import br.com.hadryan.repository.ProducerHardCodedRepository;
 import br.com.hadryan.request.ProducerPostRequest;
@@ -30,8 +28,8 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 
 @WebMvcTest(ProducerController.class)
-@Import({ProducerMapperImpl.class, ProducerUtils.class,
-        ProducerService.class, BeanConfig.class, FileUtils.class, ProducerUtils.class})
+@Import({ProducerUtils.class,
+        ProducerService.class, FileUtils.class, ProducerUtils.class})
 class ProducerControllerTest {
 
     @Autowired
@@ -140,8 +138,8 @@ class ProducerControllerTest {
     }
 
     @Test
-    @DisplayName("update() throw ResponseStatusException when producer not found")
-    void update_UpdatesThrowResponseStatusException_WhenProducerNotFound() throws Exception {
+    @DisplayName("update() throw NotFoundException when producer not found")
+    void update_ThrowNotFoundException_WhenProducerNotFound() throws Exception {
         var request = fileUtils.readResourceFile("producer/put-request-producer-404.json");
 
         var result = mockMvc.perform(MockMvcRequestBuilders
@@ -168,8 +166,8 @@ class ProducerControllerTest {
     }
 
     @Test
-    @DisplayName("delete() throw ResponseStatusException when producer not found")
-    void delete_RemovesThrowResponseStatusException_WhenProducerNotFound() throws Exception {
+    @DisplayName("delete() throw NotFoundException when producer not found")
+    void delete_ThrowNotFoundException_WhenProducerNotFound() throws Exception {
         var result = mockMvc.perform(MockMvcRequestBuilders.delete(URL + "/{id}", 1000))
                 .andDo(MockMvcResultHandlers.print())
                 .andExpect(MockMvcResultMatchers.status().isNotFound())

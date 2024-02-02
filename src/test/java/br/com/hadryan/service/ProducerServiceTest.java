@@ -110,8 +110,8 @@ class ProducerServiceTest {
     }
 
     @Test
-    @DisplayName("delete() throw ResponseStatusException when producer not found")
-    void delete_RemovesThrowResponseStatusException_WhenProducerNotFound() {
+    @DisplayName("delete() throw NotFoundException when producer not found")
+    void delete_ThrowNotFoundException_WhenProducerNotFound() {
         var id = 1L;
         BDDMockito.when(repository.findById(id)).thenReturn(Optional.empty());
 
@@ -134,8 +134,8 @@ class ProducerServiceTest {
     }
 
     @Test
-    @DisplayName("update() throw ResponseStatusException when producer not found")
-    void update_UpdatesThrowResponseStatusException_WhenProducerNotFound() {
+    @DisplayName("update() throw NotFoundException when producer not found")
+    void update_ThrowNotFoundException_WhenProducerNotFound() {
         var id = 4L;
         var producerToUpdate = Producer.builder().id(id).name("Teste").build();
         BDDMockito.when(repository.findById(id)).thenReturn(Optional.empty());
